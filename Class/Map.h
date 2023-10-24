@@ -67,8 +67,8 @@ public:
 		window->display(*background);
 
 		while (!window->is_closed()) {
-			int mouseX = window->mouse_x();
-			int mouseY = window->mouse_y();
+			float mouseX = window->mouse_x();
+			float mouseY = window->mouse_y();
 			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
 
 			if (!editorMode) {
@@ -96,6 +96,7 @@ public:
 					
 					editorMode = false;
 					addRouteInTheList(tempRoute);
+
 					// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
 				}
 			}
