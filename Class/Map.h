@@ -59,19 +59,22 @@ public:
 
 		bool editorMode = false;
 
-		Route<coordenates> tempRoute;
+	    Route<coordenates> tempRoute;
 
 		///////////////////////////////////////////////////////////////////////////////////
 		window->display(*background);
 
 		while (!window->is_closed()) {
+			
 			float mouseX = window->mouse_x();
 			float mouseY = window->mouse_y();
 			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
 
 			if (!editorMode) {
+				
 				//addRoute buttom
 				if (window->button() && mouseX > 37 && mouseY > 634 && mouseX < 304 && mouseY < 729) {
+
 					string aux;
 					cout << " Digite el nombre de la nueva ruta: ";
 					cin >> aux;
@@ -93,9 +96,12 @@ public:
 				}
 				//end route buttom
 				if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
-					
+					Route<coordenates> aux;
+					tempRoute = aux;//inicializo route
+
 					editorMode = false;
 					addRouteInTheList(tempRoute);
+
 					// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
 				}
 			}
