@@ -48,6 +48,35 @@ public:
 		delete aux;
 	}
 
+	void addRouteButton(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, bool& editorMode)
+	{
+		if (window->button() && mouseX > 37 && mouseY > 634 && mouseX < 304 && mouseY < 729) {
+
+			string aux;
+			cout << " Digite el nombre de la nueva ruta: ";
+			cin >> aux;
+			tempRoute.setNameOfRoute(aux);
+			cout << " Ahora dibuje el inicio de la nueva ruta en el mapa..." << endl;
+
+			// it would get inside the editor mode
+			editorMode = true;
+		}
+	}
+
+	void endRouteButton(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, bool& editorMode)
+	{
+		if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
+			
+			editorMode = false;
+			addRouteInTheList(tempRoute);
+			
+			Route<coordenates> aux; aux.setColor(tempRoute.getColor());
+			tempRoute = aux;//inicializo route
+			
+			// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
+		}
+	}
+
 	void gameMethod() {
 		CImgDisplay* window = new CImgDisplay(windowWidth, windowHeight, "Proyecto Progra 1", 0);
 		CImg<unsigned char>* background = new CImg<unsigned char>;
@@ -59,35 +88,24 @@ public:
 
 		bool editorMode = false;
 
-	    Route<coordenates> tempRoute;
+		Route<coordenates> tempRoute;
 
 		///////////////////////////////////////////////////////////////////////////////////
 		window->display(*background);
 
 		while (!window->is_closed()) {
-			
+
 			float mouseX = window->mouse_x();
 			float mouseY = window->mouse_y();
-			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
+			//cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
 
 			if (!editorMode) {
-				
 				//addRoute buttom
-				if (window->button() && mouseX > 37 && mouseY > 634 && mouseX < 304 && mouseY < 729) {
-
-					string aux;
-					cout << " Digite el nombre de la nueva ruta: ";
-					cin >> aux;
-					tempRoute.setNameOfRoute(aux);
-					cout << " Ahora digite el inicio de la nueva ruta en el mapa..." << endl;
-
-					// it would get inside the editor mode
-					editorMode = true;
-				}
+				addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 			}
 			else {
 				if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
-					
+
 					coordenates coords(mouseX, mouseY);
 					tempRoute.addNodoInTheEnd(coords);
 					//metodo de dibujar lineas, calcula la distancia entre nodos 
@@ -95,18 +113,11 @@ public:
 
 				}
 				//end route buttom
-				if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
-					Route<coordenates> aux;
-					tempRoute = aux;//inicializo route
-
-					editorMode = false;
-					addRouteInTheList(tempRoute);
-
-					// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
-				}
+				endRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 			}
 			window->display(*background);
 			window->wait();
 		}
 	}
+
 };

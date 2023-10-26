@@ -23,12 +23,13 @@ private:
 
 	unsigned char* color;
 
-	unsigned char Red[3] = { 255,0,0 };
-	unsigned char Blue[3] = { 0,0,255 };
-	unsigned char Yellow[3] = { 255,255,0 };
+	unsigned char red[3] = { 255,0,0 };
+	unsigned char blue[3] = { 0,0,255 };
+	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route(): header(nullptr),nameOfRoute(""),color(Red){}
+	Route(): header(nullptr),nameOfRoute(""),color(red){}
+	Route(const Route& newRoute) : header(nullptr), nameOfRoute(""), color(newRoute.color){}
 	~Route() {
 		while (header) {
 			RouteNodo* temp = header;
@@ -69,14 +70,21 @@ public:
 		aux = nullptr;
 		delete aux;
 	}
-	void drawRoute(CImg<unsigned char>*& _background) {
+	void drawRoute(CImg<unsigned char>* _background) {
 		RouteNodo* aux = header;
+		if (!header->next && header) {
+			_background->draw_point(header->data.getX(), header->data.getY(), color);
+		}
+		//unsigned char redd[] = { 255,0,0 };
 		while (aux->next) {
-			_background->draw_line(aux->data.getX(), aux->data.getY(), 
-				aux->next->data.getX(), aux->next->data.getY(), color);
-
+			_background->draw_line(aux->data.getX(), aux->data.getY(),
+				aux->next->data.getX(), aux->next->data.getY(), color);//color
+			//_background->draw_point(aux->data.getX(), aux->data.getY(),color)
+			//el problema debe estar en el color
+			
 			aux = aux->next;
 		}
+		
 	}
 
 };
@@ -84,7 +92,7 @@ public:
 struct coordenates {
 	float x;
 	float y;
-	coordenates() { x = -1; y = -1; }
+	coordenates() = delete;
 	coordenates(float _x, float _y) : x(_x), y(_y) {}
 	void setX(float _x) { this->x = _x; }
 	void setY(float _y) { this->y = _y; }
