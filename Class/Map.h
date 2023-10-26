@@ -52,12 +52,10 @@ public:
 		CImgDisplay* window = new CImgDisplay(windowWidth, windowHeight, "Proyecto Progra 1", 0);
 		CImg<unsigned char>* background = new CImg<unsigned char>;
 		background->assign(windowWidth, windowHeight, 1, 3, 255);
-		window->display(*background);
-
 		//////////////////////////////////////////////////////////////////////////////////
 
-		const char* menuImagen = "MyNewMap.png"; // Se iguala "menuImagen" a la imagen del menu
-		background->load(menuImagen); // Se carga "menuImagen" en "menu"
+		const char* Image = "MyNewMap.png"; // Se iguala "menuImagen" a la imagen del menu
+		background->load(Image); // Se carga "menuImagen" en "menu"
 
 		bool editorMode = false;
 
@@ -73,7 +71,7 @@ public:
 
 			if (!editorMode) {
 				//addRoute buttom
-				if (window->button() && mouseX > 37 && mouseY > 576 && mouseX < 304 && mouseY < 658) {
+				if (window->button() && mouseX > 37 && mouseY > 634 && mouseX < 304 && mouseY < 729) {
 					string aux;
 					cout << " Digite el nombre de la nueva ruta: ";
 					cin >> aux;
@@ -85,22 +83,23 @@ public:
 				}
 			}
 			else {
-				if (window->button()) {
+				if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
 					
 					coordenates coords(mouseX, mouseY);
 					tempRoute.addNodoInTheEnd(coords);
 					//metodo de dibujar lineas, calcula la distancia entre nodos 
+					tempRoute.drawRoute(background);
+
 				}
 				//end route buttom
-				if (window->button() && mouseX > 326 && mouseY > 574 && mouseX < 593 && mouseY < 654) {
+				if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
 					
 					editorMode = false;
 					addRouteInTheList(tempRoute);
-
 					// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
 				}
 			}
-
+			window->display(*background);
 			window->wait();
 		}
 	}

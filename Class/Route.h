@@ -5,7 +5,7 @@ using namespace std;
 using namespace cimg_library;
 
 const int windowWidth = 1368;
-const int windowHeight = 690;
+const int windowHeight = 767;
 
 template<typename T>
 class Route {
@@ -68,6 +68,15 @@ public:
 		delete nodoAdded;
 		aux = nullptr;
 		delete aux;
+	}
+	void drawRoute(CImg<unsigned char>*& _background) {
+		RouteNodo* aux = header;
+		while (aux->next) {
+			_background->draw_line(aux->data.getX(), aux->data.getY(), 
+				aux->next->data.getX(), aux->next->data.getY(), color);
+
+			aux = aux->next;
+		}
 	}
 
 };
