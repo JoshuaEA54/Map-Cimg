@@ -28,14 +28,13 @@ private:
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route(): header(nullptr),nameOfRoute(""),color(red){}
-	Route(const Route& newRoute) : header(nullptr), nameOfRoute(""), color(newRoute.color){}
+	Route() : header(nullptr), nameOfRoute(""), color(red) {}
+	Route(const Route& newRoute):header(newRoute.header),nameOfRoute(newRoute.nameOfRoute),color(newRoute.color){}
+	
 	~Route() {
 		while (header) {
 			RouteNodo* temp = header;
 			header = header->next;
-			temp->prev = nullptr;//para no tener memoria suelta
-			temp->next = nullptr;// no importa hacer un puntero nullptr a nullptr de nuevo
 			temp = nullptr;
 			delete temp;
 		}
@@ -75,18 +74,34 @@ public:
 		if (!header->next && header) {
 			_background->draw_point(header->data.getX(), header->data.getY(), color);
 		}
-		//unsigned char redd[] = { 255,0,0 };
+		
 		while (aux->next) {
 			_background->draw_line(aux->data.getX(), aux->data.getY(),
-				aux->next->data.getX(), aux->next->data.getY(), color);//color
-			//_background->draw_point(aux->data.getX(), aux->data.getY(),color)
-			//el problema debe estar en el color
-			
+				aux->next->data.getX(), aux->next->data.getY(), color);
+
 			aux = aux->next;
 		}
-		
+
 	}
 
+	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY) {
+
+		RouteNodo* aux = header;
+		while (aux) {//ojito con el while
+
+			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {
+				cout << " si esta en rango" << endl;
+			}
+
+			aux = aux->next;
+		}
+		delete aux;
+
+	}
+
+	int calculateDistance(int mouseX, int mouseY, T chords) {
+		return sqrt(pow(chords.getX() - mouseX, 2) + pow(chords.getY() - mouseY, 2));
+	}
 };
 
 struct coordenates {

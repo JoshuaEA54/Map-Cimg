@@ -19,6 +19,16 @@ private:
 public:
 	Map() : header(nullptr), amountOfRoutes(0) {}
 
+	~Map() {
+		while (header) {
+			MapNodo* temp = header;
+			header = header->next;
+			temp->route.~Route();//llama al destructor de ese nodo y asi con todos
+			temp = nullptr;
+			delete temp;
+		}
+	}
+
 	MapNodo* getHeader() { return header; }
 	int getAmountOfRoutes() { return amountOfRoutes; }
 
@@ -66,21 +76,34 @@ public:
 	void endRouteButton(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, bool& editorMode)
 	{
 		if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
-			
+
 			editorMode = false;
 			addRouteInTheList(tempRoute);
-			
-			Route<coordenates> aux; aux.setColor(tempRoute.getColor());
+
+			Route<coordenates> aux;
+			aux.setColor(tempRoute.getColor());
 			tempRoute = aux;//inicializo route
-			
+
 			// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
 		}
+	}
+
+	void detectMouseInRoutes(CImgDisplay* window, float mouseX, float mouseY) {
+
+		MapNodo* aux = header;
+		while (aux) {
+			aux->route.runThroughRoute(window, mouseX, mouseY);
+			aux = aux->next;
+		}
+		delete aux;
+
 	}
 
 	void gameMethod() {
 		CImgDisplay* window = new CImgDisplay(windowWidth, windowHeight, "Proyecto Progra 1", 0);
 		CImg<unsigned char>* background = new CImg<unsigned char>;
 		background->assign(windowWidth, windowHeight, 1, 3, 255);
+
 		//////////////////////////////////////////////////////////////////////////////////
 
 		const char* Image = "MyNewMap.png"; // Se iguala "menuImagen" a la imagen del menu
@@ -102,16 +125,20 @@ public:
 			if (!editorMode) {
 				//addRoute buttom
 				addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
+				//see if the mouse touches a vertex
+				detectMouseInRoutes(window, mouseX, mouseY);
 			}
 			else {
 				if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
 
 					coordenates coords(mouseX, mouseY);
 					tempRoute.addNodoInTheEnd(coords);
-					//metodo de dibujar lineas, calcula la distancia entre nodos 
+
+					//metodo de dibujar lineas 
 					tempRoute.drawRoute(background);
 
 				}
+
 				//end route buttom
 				endRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 			}
