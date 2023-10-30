@@ -88,11 +88,11 @@ public:
 		}
 	}
 
-	void detectMouseInRoutes(CImgDisplay* window, float mouseX, float mouseY) {
+	void detectMouseInRoutes(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>* _background) {
 
 		MapNodo* aux = header;
 		while (aux) {
-			aux->route.runThroughRoute(window, mouseX, mouseY);
+			aux->route.runThroughRoute(window, mouseX, mouseY,_background);
 			aux = aux->next;
 		}
 		delete aux;
@@ -125,8 +125,9 @@ public:
 			if (!editorMode) {
 				//addRoute buttom
 				addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
+
 				//see if the mouse touches a vertex
-				detectMouseInRoutes(window, mouseX, mouseY);
+				detectMouseInRoutes(window, mouseX, mouseY,background);
 			}
 			else {
 				if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {

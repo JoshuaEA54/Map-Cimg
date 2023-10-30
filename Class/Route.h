@@ -84,19 +84,27 @@ public:
 
 	}
 
-	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY) {
+	void drawCirclesInRoute(CImg<unsigned char>* _background) {
 
 		RouteNodo* aux = header;
-		while (aux) {//ojito con el while
-
-			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {
-				cout << " si esta en rango" << endl;
-			}
-
+		while (aux) {
+			_background->draw_circle(aux->data.getX(), aux->data.getY(), 10, color);
 			aux = aux->next;
 		}
 		delete aux;
+	}
 
+	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>* _background) {
+
+		RouteNodo* aux = header;
+		while (aux) {//ojito con el while
+			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {
+				cout << " si esta en rango" << endl;
+				drawCirclesInRoute(_background);
+			}
+			aux = aux->next;
+		}
+		delete aux;
 	}
 
 	int calculateDistance(int mouseX, int mouseY, T chords) {
