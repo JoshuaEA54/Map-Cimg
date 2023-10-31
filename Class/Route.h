@@ -20,6 +20,7 @@ private:
 	};
 	RouteNodo* header;
 	string nameOfRoute;
+	bool status;// selected or not
 
 	unsigned char* color;
 
@@ -28,9 +29,8 @@ private:
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route() : header(nullptr), nameOfRoute(""), color(red) {}
-	Route(const Route& newRoute):header(newRoute.header),nameOfRoute(newRoute.nameOfRoute),color(newRoute.color){}
-	
+	Route() : header(nullptr), nameOfRoute(""), color(red), status(false){}
+	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status) {}
 	~Route() {
 		while (header) {
 			RouteNodo* temp = header;
@@ -41,13 +41,22 @@ public:
 
 	}
 
+public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
-	void setHeader(RouteNodo* newHeader) { header = newHeader; }
-	void setColor(unsigned char* _color) { color = _color; }
+	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
+	void setColor(unsigned char* _color) { this->color = _color; }
+	void setStatus(bool newStatus) { this->status = newStatus; }
 
+public:
 	string getNameOfRoute() { return nameOfRoute; }
 	RouteNodo* getHeader() { return header; }
+	bool getStatus() { return status; }
+
+public: //colors
 	unsigned char* getColor() { return color; }
+	unsigned char* getRed() { return red; }
+	unsigned char* getYellow() { return yellow; }
+	unsigned char* getBlue() { return blue; }
 
 	void addNodoInTheEnd(T value) {
 		RouteNodo* nodoAdded = new RouteNodo(value);
@@ -74,7 +83,7 @@ public:
 		if (!header->next && header) {
 			_background->draw_point(header->data.getX(), header->data.getY(), color);
 		}
-		
+
 		while (aux->next) {
 			_background->draw_line(aux->data.getX(), aux->data.getY(),
 				aux->next->data.getX(), aux->next->data.getY(), color);
@@ -92,19 +101,21 @@ public:
 			aux = aux->next;
 		}
 		delete aux;
+
 	}
 
 	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>* _background) {
 
 		RouteNodo* aux = header;
-		while (aux) {//ojito con el while
-			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {
-				cout << " si esta en rango" << endl;
+		while (aux) {
+			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {//radio de 10 pixeles
+				status = true;//this route is selected
 				drawCirclesInRoute(_background);
 			}
 			aux = aux->next;
 		}
 		delete aux;
+
 	}
 
 	int calculateDistance(int mouseX, int mouseY, T chords) {
