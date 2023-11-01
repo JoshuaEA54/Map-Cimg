@@ -105,43 +105,34 @@ public:
 			while (aux->route.getStatus() == false && aux->next != nullptr) {
 				aux = aux->next;
 			}
-			if (aux == nullptr) {
-				aux = nullptr;
-				delete aux;
-			}
-			else {//significa que se salio con el estado en true
-
+			if (aux->route.getStatus() == true) {
 				int X = 1255;
 				int X2 = 1325;  //area of each rectangle
 				int Y = 280;
 				int Y2 = 350;
-
 				for (int i = 0; i < 3; i++) {
 					if (window->button() && mouseX > X && mouseY > Y && mouseX < X2 && mouseY < Y2) {
-						system("cls");
+						
 						if (i == 0) {
-							cout << " amarillo " << endl;
 							aux->route.setColor(aux->route.getYellow());
 							aux->route.drawCirclesInRoute(background);//with the newColor
 							aux->route.drawRoute(background);
 						}
 						else if (i == 1) {
-							cout << " rojo " << endl;
 							aux->route.setColor(aux->route.getRed());
 							aux->route.drawCirclesInRoute(background);
 							aux->route.drawRoute(background);
 						}
 						else {
-							cout << " azul " << endl;
 							aux->route.setColor(aux->route.getBlue());
 							aux->route.drawCirclesInRoute(background);
 							aux->route.drawRoute(background);
 						}
+						aux->route.setStatus(false);//important to do not keep doing changes to this route
 					}
 					Y = Y + 75;
 					Y2 = Y2 + 75;
 				}
-				aux->route.setStatus(false);
 			}
 		}
 		
