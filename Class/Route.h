@@ -29,7 +29,7 @@ private:
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route() : header(nullptr), nameOfRoute(""), color(red), status(false){}
+	Route() : header(nullptr), nameOfRoute(""), color(red), status(false) {}
 	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status) {}
 	~Route() {
 		while (header) {
@@ -80,17 +80,20 @@ public: //colors
 	}
 	void drawRoute(CImg<unsigned char>* _background) {
 		RouteNodo* aux = header;
-		if (!header->next && header) {
-			_background->draw_point(header->data.getX(), header->data.getY(), color);
+		if (header) {
+			if (!header->next) {
+				_background->draw_point(header->data.getX(), header->data.getY(), color);
+			}
+			while (aux->next) {
+				_background->draw_line(aux->data.getX(), aux->data.getY(),
+					aux->next->data.getX(), aux->next->data.getY(), color);
+
+				aux = aux->next;
+			}
 		}
 
-		while (aux->next) {
-			_background->draw_line(aux->data.getX(), aux->data.getY(),
-				aux->next->data.getX(), aux->next->data.getY(), color);
-
-			aux = aux->next;
-		}
-
+		aux = nullptr;
+		delete aux;
 	}
 
 	void drawCirclesInRoute(CImg<unsigned char>* _background) {

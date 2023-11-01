@@ -134,6 +134,8 @@ public:
 					Y2 = Y2 + 75;
 				}
 			}
+			aux = nullptr;
+			delete aux;
 		}
 		
 	}
