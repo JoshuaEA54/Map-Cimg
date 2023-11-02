@@ -35,10 +35,9 @@ public:
 		while (header) {
 			RouteNodo* temp = header;
 			header = header->next;
-			temp = nullptr;
+			temp = nullptr;//tengo fallos al quitar este nulo
 			delete temp;
 		}
-
 	}
 
 public:
@@ -60,12 +59,12 @@ public: //colors
 
 	void addNodoInTheEnd(T value) {
 		RouteNodo* nodoAdded = new RouteNodo(value);
-		RouteNodo* aux = header;
-
+		
 		if (!header) {
 			header = nodoAdded;
 		}
-		else {// means that the head next is with a nodo
+		else {// means that the head-> next is with a nodo
+           RouteNodo* aux = header;
 			while (aux->next) {
 				aux = aux->next;
 			}
@@ -73,12 +72,8 @@ public: //colors
 			aux->next->prev = aux;
 		}
 
-		nodoAdded = nullptr;
-		delete nodoAdded;
-		aux = nullptr;
-		delete aux;
 	}
-	void drawRoute(CImg<unsigned char>* _background) {
+	void drawRoute(CImg<unsigned char>*& _background) {
 		RouteNodo* aux = header;
 		if (header) {
 			if (!header->next) {
@@ -92,32 +87,32 @@ public: //colors
 			}
 		}
 
-		aux = nullptr;
-		delete aux;
 	}
 
-	void drawCirclesInRoute(CImg<unsigned char>* _background) {
+	void drawCirclesInRoute(CImg<unsigned char>*& _background) {
 
 		RouteNodo* aux = header;
 		while (aux) {
 			_background->draw_circle(aux->data.getX(), aux->data.getY(), 10, color);
 			aux = aux->next;
 		}
-		delete aux;
 
 	}
 
-	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>* _background) {
+	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background) {
 
 		RouteNodo* aux = header;
 		while (aux) {
 			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {//radio de 10 pixeles
+				system("cls");
 				status = true;//this route is selected
+				cout << " Ruta seleccionada: " << getNameOfRoute() << endl
+					<< " Puede editarla... " << endl;
+
 				drawCirclesInRoute(_background);
 			}
 			aux = aux->next;
 		}
-		delete aux;
 
 	}
 
