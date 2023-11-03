@@ -31,14 +31,6 @@ private:
 public:
 	Route() : header(nullptr), nameOfRoute(""), color(red), status(false) {}
 	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status) {}
-	~Route() {
-		while (header) {
-			RouteNodo* temp = header;
-			header = header->next;
-			temp = nullptr;//tengo fallos al quitar este nulo
-			delete temp;
-		}
-	}
 
 public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
@@ -102,7 +94,7 @@ public: //colors
 	void runThroughRoute(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background) {
 
 		RouteNodo* aux = header;
-		while (aux) {
+		while (aux != nullptr) {
 			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {//radio de 10 pixeles
 				system("cls");
 				status = true;//this route is selected
@@ -114,6 +106,21 @@ public: //colors
 			aux = aux->next;
 		}
 
+	}
+
+	void deleteRoute() {
+		while (header) {
+			RouteNodo* temp = header;
+			header = header->next;
+
+			if (header) {
+				header->prev = nullptr;
+			}
+			temp->next = nullptr;
+			temp->prev = nullptr;
+
+			delete temp;
+		}
 	}
 
 	int calculateDistance(int mouseX, int mouseY, T chords) {
