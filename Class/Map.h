@@ -11,7 +11,7 @@ private:
 		MapNodo* next;
 		MapNodo* prev;
 		MapNodo(T _route) : route(_route), next(nullptr), prev(nullptr) {}
-		
+
 	};
 	MapNodo* header;
 
@@ -38,12 +38,12 @@ public:
 
 	void addRouteInTheList(T _route) {
 		MapNodo* nodoAdded = new MapNodo(_route);
-		
+
 		if (!header) {
-			header = nodoAdded;	
+			header = nodoAdded;
 		}
 		else {// means that the head next is with a nodo
-            MapNodo* aux = header;
+			MapNodo* aux = header;
 			while (aux->next) {
 				aux = aux->next;
 			}
@@ -84,23 +84,38 @@ public:
 		}
 	}
 
-	void detectMouseInRoutes(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background) {
-
-		MapNodo* aux = header;
-		while (aux) {
-			aux->route.runThroughRoute(window, mouseX, mouseY,_background);
-			aux = aux->next;
-		}
-
-	}
-
-	void detectMouseInColors(CImgDisplay* window,int mouseX,int mouseY, CImg<unsigned char>*& background, const char* Image){
+	void deleteRouteButton(CImgDisplay* window, float mouseX, float mouseY,CImg<unsigned char>*& _background, const char* Image) {
 		if (header != nullptr) {
 			MapNodo* aux = header;
 			while (aux->route.getStatus() == false && aux->next != nullptr) {
 				aux = aux->next;
 			}
-			if (aux->route.getStatus() == true && window->button() && mouseX > 1255 && mouseY > 280 && mouseX < 1325 && mouseY < 500 ) {
+			if (aux->route.getStatus() == true && window->button() && mouseX > 657 && mouseY > 642 && mouseX < 971 && mouseY < 722) {
+				//delete button
+				aux->route.~Route();//I call the destructor of the route
+				reDrawAllRoutes(_background, Image);
+				aux->route.setStatus(false);
+			}
+		}
+	}
+
+	void detectMouseInRoutes(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background) {
+
+		MapNodo* aux = header;
+		while (aux) {
+			aux->route.runThroughRoute(window, mouseX, mouseY, _background);
+			aux = aux->next;
+		}
+
+	}
+
+	void detectMouseInColors(CImgDisplay* window, int mouseX, int mouseY, CImg<unsigned char>*& background, const char* Image) {
+		if (header != nullptr) {
+			MapNodo* aux = header;
+			while (aux->route.getStatus() == false && aux->next != nullptr) {
+				aux = aux->next;
+			}
+			if (aux->route.getStatus() == true && window->button() && mouseX > 1255 && mouseY > 280 && mouseX < 1325 && mouseY < 500) {
 				//esta condicion para saber que ademas de tener el estado tiene que tocar la paleta de colores
 
 				int X = 1255;
@@ -110,15 +125,15 @@ public:
 
 				for (int i = 0; i < 3; i++) {
 					if (window->button() && mouseX > X && mouseY > Y && mouseX < X2 && mouseY < Y2) {
-						
+
 						if (i == 0) {
 							aux->route.setColor(aux->route.getYellow());
 						}
 						else if (i == 1) {
-							aux->route.setColor(aux->route.getRed());							
+							aux->route.setColor(aux->route.getRed());
 						}
 						else {
-							aux->route.setColor(aux->route.getBlue());							
+							aux->route.setColor(aux->route.getBlue());
 						}
 
 						aux->route.setStatus(false);//important to do not keep doing changes to this route
@@ -126,16 +141,16 @@ public:
 					Y = Y + 75;
 					Y2 = Y2 + 75;
 				}
-				reDrawAllRoutes(background,Image);
+				reDrawAllRoutes(background, Image);
 			}
-			
+
 		}
-		
+
 	}
 
 	void reDrawAllRoutes(CImg<unsigned char>*& _background, const char* Image) {
-	    //this is to borrow the circles
-		_background->load(Image);           
+		//this is to borrow the circles
+		_background->load(Image);
 
 		//and draw all the routes again
 		if (header) {
@@ -144,6 +159,17 @@ public:
 				aux->route.drawRoute(_background);
 				aux = aux->next;
 			}
+		}
+	}
+
+	void drawingOnWindow(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, CImg<unsigned char>*& background)
+	{
+		if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
+
+			coordenates coords(mouseX, mouseY);
+			tempRoute.addNodoInTheEnd(coords);
+			//metodo de dibujar lineas 
+			tempRoute.drawRoute(background);
 		}
 	}
 
@@ -165,7 +191,7 @@ public:
 		window->display(*background);
 
 		while (!window->is_closed()) {
-			
+
 			float mouseX = window->mouse_x();
 			float mouseY = window->mouse_y();
 
@@ -178,13 +204,15 @@ public:
 				addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 
 				//see if the mouse touches a vertex
-				detectMouseInRoutes(window, mouseX, mouseY,background);
+				detectMouseInRoutes(window, mouseX, mouseY, background);
 
 				//colors palet with the changes if you touch it
-				detectMouseInColors(window, mouseX, mouseY,background,Image);
+				detectMouseInColors(window, mouseX, mouseY, background, Image);
+
+				deleteRouteButton(window, mouseX, mouseY, background, Image);
 			}
 			else {
-				
+
 				drawingOnWindow(window, mouseX, mouseY, tempRoute, background);
 
 				//end route buttom
@@ -196,15 +224,6 @@ public:
 		}
 	}
 
-	void drawingOnWindow(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, CImg<unsigned char>*& background)
-	{
-		if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
 
-			coordenates coords(mouseX, mouseY);
-			tempRoute.addNodoInTheEnd(coords);
-			//metodo de dibujar lineas 
-			tempRoute.drawRoute(background);
-		}
-	}
 
 };
