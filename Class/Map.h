@@ -24,8 +24,11 @@ public:
 		while (header) {
 			MapNodo* temp = header;
 			header = header->next;
-			temp->route.~Route();//llama al destructor de ese nodo y asi con todos
-			//temp = nullptr;
+			if (header) {
+				header->prev = nullptr;
+			}
+			temp->next = nullptr;
+			temp->prev = nullptr; 
 			delete temp;
 		}
 	}
@@ -41,6 +44,7 @@ public:
 
 		if (!header) {
 			header = nodoAdded;
+			
 		}
 		else {// means that the head next is with a nodo
 			MapNodo* aux = header;
@@ -92,7 +96,7 @@ public:
 			}
 			if (aux->route.getStatus() == true && window->button() && mouseX > 657 && mouseY > 642 && mouseX < 971 && mouseY < 722) {
 				//delete button
-				aux->route.~Route();//I call the destructor of the route
+				aux->route.deleteRoute();
 				reDrawAllRoutes(_background, Image);
 				aux->route.setStatus(false);
 			}
