@@ -88,6 +88,15 @@ public:
 		}
 	}
 
+	/*void deleteVerteButton(CImgDisplay* window, float mouseX, float mouseY) {
+		if (header != nullptr) {
+			MapNodo* aux = header;
+			while (aux->route.getStatus() == false && aux->next != nullptr) {
+				aux = aux->next;
+			}
+		}
+	}*/
+
 	void deleteRouteButton(CImgDisplay* window, float mouseX, float mouseY,CImg<unsigned char>*& _background, const char* Image) {
 		if (header != nullptr) {
 			MapNodo* aux = header;
@@ -97,6 +106,31 @@ public:
 			if (aux->route.getStatus() == true && window->button() && mouseX > 657 && mouseY > 642 && mouseX < 971 && mouseY < 722) {
 				//delete button
 				aux->route.deleteRoute();
+				reDrawAllRoutes(_background, Image);
+				aux->route.setStatus(false);
+			}
+		}
+	}
+
+	void showOrHideButton(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background, const char* Image) {
+		if (header != nullptr) {
+			MapNodo* aux = header;
+			while (aux->route.getStatus() == false && aux->next != nullptr) {
+				aux = aux->next;
+			}
+			if (aux->route.getStatus() == true && window->button() && mouseX > 1014 && mouseY > 643 && mouseX < 1322 && mouseY < 724) {
+				//show/hidebutton
+				
+				if (!aux->route.getHideOrNot()) {
+					aux->route.setHideOrNot(true);
+				}
+				else {
+					aux->route.setHideOrNot(false);
+				}
+
+				//this method verifies the status of hideOrNot
+				aux->route.drawRoute(_background);
+
 				reDrawAllRoutes(_background, Image);
 				aux->route.setStatus(false);
 			}
@@ -184,7 +218,7 @@ public:
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		const char* Image = "MyNewMap.png"; // Se iguala "menuImagen" a la imagen del menu
+		const char* Image = "MyNewMap2.png"; // Se iguala "menuImagen" a la imagen del menu
 		background->load(Image); // Se carga "menuImagen" en "menu"
 
 		bool editorMode = false;
@@ -214,6 +248,8 @@ public:
 				detectMouseInColors(window, mouseX, mouseY, background, Image);
 
 				deleteRouteButton(window, mouseX, mouseY, background, Image);
+
+				showOrHideButton(window, mouseX, mouseY, background, Image);
 			}
 			else {
 

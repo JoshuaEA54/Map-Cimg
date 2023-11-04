@@ -21,6 +21,7 @@ private:
 	RouteNodo* header;
 	string nameOfRoute;
 	bool status;// selected or not
+	bool hideOrNot;
 
 	unsigned char* color;
 
@@ -29,19 +30,21 @@ private:
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route() : header(nullptr), nameOfRoute(""), color(red), status(false) {}
-	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status) {}
+	Route() : header(nullptr), nameOfRoute(""), color(red), status(false),hideOrNot(false) {}
+	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
 
 public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
 	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
 	void setColor(unsigned char* _color) { this->color = _color; }
 	void setStatus(bool newStatus) { this->status = newStatus; }
+	void setHideOrNot(bool _HideOrNot) { this->hideOrNot = _HideOrNot; }
 
 public:
 	string getNameOfRoute() { return nameOfRoute; }
 	RouteNodo* getHeader() { return header; }
 	bool getStatus() { return status; }
+	bool getHideOrNot() { return hideOrNot; }
 
 public: //colors
 	unsigned char* getColor() { return color; }
@@ -68,17 +71,22 @@ public: //colors
 	void drawRoute(CImg<unsigned char>*& _background) {
 		RouteNodo* aux = header;
 		if (header) {
-			if (!header->next) {
-				_background->draw_point(header->data.getX(), header->data.getY(), color);
-			}
-			while (aux->next) {
-				_background->draw_line(aux->data.getX(), aux->data.getY(),
-					aux->next->data.getX(), aux->next->data.getY(), color);
+			if (!hideOrNot) {//draws the line normally
+				if (!header->next) {
+					_background->draw_point(header->data.getX(), header->data.getY(), color);
+				}
+				while (aux->next) {
+					_background->draw_line(aux->data.getX(), aux->data.getY(),
+						aux->next->data.getX(), aux->next->data.getY(), color);
 
-				aux = aux->next;
+					aux = aux->next;
+				}
+
+			}
+			else {
+				_background->draw_circle(header->data.getX(), header->data.getY(), 10, color);
 			}
 		}
-
 	}
 
 	void drawCirclesInRoute(CImg<unsigned char>*& _background) {
