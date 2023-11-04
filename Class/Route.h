@@ -106,7 +106,7 @@ public: //colors
 			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {//radio de 10 pixeles
 				system("cls");
 				status = true;//this route is selected
-				cout << " Ruta seleccionada: " << getNameOfRoute() << endl
+				cout << " Ruta seleccionada: " << nameOfRoute << endl
 					<< " Puede editarla... " << endl;
 
 				drawCirclesInRoute(_background);
@@ -129,6 +129,48 @@ public: //colors
 
 			delete temp;
 		}
+	}
+
+	void clickUser(CImgDisplay* window, float mouseX, float mouseY,bool& _deleteNodo) {
+		RouteNodo* aux = header;
+		bool flag = false;
+
+		while (aux != nullptr && !flag) {
+			if (window->button() && (calculateDistance(mouseX, mouseY, aux->data) <= 10)) {
+				flag = true;
+			}
+			if (!flag) {
+				aux = aux->next;
+			}
+		}
+
+		if (flag == true) {
+			deleteNodo(aux);
+			_deleteNodo = false;
+		}
+	}
+
+	void deleteNodo(RouteNodo* nodoToDelete) {
+		if (!header->next) {//theres just one element
+			header = nullptr;
+		}
+		else {
+			if (nodoToDelete->prev == nullptr) {//theres two or more elements
+				nodoToDelete->next->prev = nullptr;
+				header = nodoToDelete->next;
+				//we dont update the next or prev of the nodoToDelete
+			}
+			else {
+				if (nodoToDelete->next == nullptr) {//means we are at the end
+					nodoToDelete->prev->next = nullptr;
+				}
+				else {
+					nodoToDelete->prev->next = nodoToDelete->next;
+					nodoToDelete->next->prev = nodoToDelete->prev;
+				}
+			}
+		}
+		delete nodoToDelete;
 	}
 
 	int calculateDistance(int mouseX, int mouseY, T chords) {

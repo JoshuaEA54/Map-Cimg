@@ -28,7 +28,7 @@ public:
 				header->prev = nullptr;
 			}
 			temp->next = nullptr;
-			temp->prev = nullptr; 
+			temp->prev = nullptr;
 			delete temp;
 		}
 	}
@@ -44,7 +44,7 @@ public:
 
 		if (!header) {
 			header = nodoAdded;
-			
+
 		}
 		else {// means that the head next is with a nodo
 			MapNodo* aux = header;
@@ -88,16 +88,24 @@ public:
 		}
 	}
 
-	/*void deleteVerteButton(CImgDisplay* window, float mouseX, float mouseY) {
-		if (header != nullptr) {
-			MapNodo* aux = header;
-			while (aux->route.getStatus() == false && aux->next != nullptr) {
-				aux = aux->next;
+	void deleteVertexButton(CImgDisplay* window, float mouseX, float mouseY, bool& deleteNodo, CImg<unsigned char>*& _background) {
+		if (header) {
+			if (window->button() && mouseX > 1009 && mouseY > 526 && mouseX < 1324 && mouseY < 611) {
+				//delete vertex button
+				deleteNodo = true;
+
+				//draw circles in all the routes
+				MapNodo* aux = header;
+				while (aux) {
+					aux->route.drawCirclesInRoute(_background);//to know that you pressed the button
+					aux = aux->next;
+				}
+				
 			}
 		}
-	}*/
+	}
 
-	void deleteRouteButton(CImgDisplay* window, float mouseX, float mouseY,CImg<unsigned char>*& _background, const char* Image) {
+	void deleteRouteButton(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background, const char* Image) {
 		if (header != nullptr) {
 			MapNodo* aux = header;
 			while (aux->route.getStatus() == false && aux->next != nullptr) {
@@ -120,7 +128,7 @@ public:
 			}
 			if (aux->route.getStatus() == true && window->button() && mouseX > 1014 && mouseY > 643 && mouseX < 1322 && mouseY < 724) {
 				//show/hidebutton
-				
+
 				if (!aux->route.getHideOrNot()) {
 					aux->route.setHideOrNot(true);
 				}
@@ -187,7 +195,7 @@ public:
 	}
 
 	void reDrawAllRoutes(CImg<unsigned char>*& _background, const char* Image) {
-		//this is to borrow the circles
+		//this is to borrow the things I deleted
 		_background->load(Image);
 
 		//and draw all the routes again
@@ -211,6 +219,15 @@ public:
 		}
 	}
 
+	void deleteVertex(CImgDisplay* window, float mouseX, float mouseY, bool& deleteNodo)
+	{
+		MapNodo* aux = header;
+		while (aux) {
+			aux->route.clickUser(window, mouseX, mouseY, deleteNodo);
+			aux = aux->next;
+		}
+	}
+
 	void gameMethod() {
 		CImgDisplay* window = new CImgDisplay(windowWidth, windowHeight, "Proyecto Progra 1", 0);
 		CImg<unsigned char>* background = new CImg<unsigned char>;
@@ -218,10 +235,11 @@ public:
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		const char* Image = "MyNewMap2.png"; // Se iguala "menuImagen" a la imagen del menu
-		background->load(Image); // Se carga "menuImagen" en "menu"
+		const char* Image = "MyNewMap2.png"; 
+		background->load(Image); 
 
 		bool editorMode = false;
+		bool deleteNodo = false;
 
 		Route<coordenates> tempRoute;
 
@@ -237,19 +255,26 @@ public:
 			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;*/
 
 			if (!editorMode) {
+				if (!deleteNodo) {
+					//addRoute buttom
+					addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 
-				//addRoute buttom
-				addRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
+					//see if the mouse touches a vertex
+					detectMouseInRoutes(window, mouseX, mouseY, background);
 
-				//see if the mouse touches a vertex
-				detectMouseInRoutes(window, mouseX, mouseY, background);
+					//colors palet with the changes if you touch it
+					detectMouseInColors(window, mouseX, mouseY, background, Image);
 
-				//colors palet with the changes if you touch it
-				detectMouseInColors(window, mouseX, mouseY, background, Image);
+					deleteRouteButton(window, mouseX, mouseY, background, Image);
 
-				deleteRouteButton(window, mouseX, mouseY, background, Image);
+					showOrHideButton(window, mouseX, mouseY, background, Image);
 
-				showOrHideButton(window, mouseX, mouseY, background, Image);
+					deleteVertexButton(window, mouseX, mouseY, deleteNodo, background);
+				}
+				else {
+					deleteVertex(window, mouseX, mouseY, deleteNodo);
+					reDrawAllRoutes(background, Image);
+				}
 			}
 			else {
 
@@ -263,6 +288,8 @@ public:
 			window->wait();
 		}
 	}
+
+
 
 
 
