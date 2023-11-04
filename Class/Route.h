@@ -147,6 +147,7 @@ public: //colors
 		if (flag == true) {
 			deleteNodo(aux);
 			_deleteNodo = false;
+
 		}
 	}
 

@@ -273,6 +273,7 @@ public:
 				}
 				else {
 					deleteVertex(window, mouseX, mouseY, deleteNodo);
+					if(!deleteNodo)
 					reDrawAllRoutes(background, Image);
 				}
 			}
