@@ -16,7 +16,9 @@ private:
 	MapNodo* header;
 
 	int amountOfRoutes;
-
+	ofstream outFile;
+	ifstream inFile;
+		
 public:
 	Map() : header(nullptr), amountOfRoutes(0) {}
 
@@ -64,7 +66,7 @@ public:
 			system("cls");
 			string aux;
 			cout << " Digite el nombre de la nueva ruta: ";
-			cin >> aux;
+			getline(cin, aux);//gets the entire line
 			tempRoute.setNameOfRoute(aux);
 			cout << " Ahora dibuje el inicio de la nueva ruta en el mapa..." << endl;
 
@@ -228,6 +230,41 @@ public:
 		}
 	}
 
+	void saveRoutes(CImgDisplay* window, float mouseX, float mouseY) {
+
+		if (window->button() && mouseX > 17 && mouseY > 18 && mouseX < 256 && mouseY < 96) {
+			outFile.open("Routes.txt");
+
+			// See if the file opened correctly
+			if (!outFile.is_open()) {
+				cerr << "No se pudo abrir el archivo." << endl;
+				exit(1);
+			}
+
+			//NameOfRoute;(X,Y);
+			if (header) {
+				MapNodo* aux = header;
+				while (aux) {
+					outFile << aux->route.getNameOfRoute() << ";";
+					aux->route.routeCoordenates(outFile);//we put the coordenates
+					outFile << endl;// to change to the next route an endl
+
+					aux = aux->next;
+				}
+			}
+			else {
+				outFile << " There is no routes on the map " << endl;
+			}
+			outFile.close();
+		}
+	}
+
+	void loadRoutes(CImgDisplay* window, float mouseX, float mouseY) {
+		if (window->button() && mouseX > 1105 && mouseY > 18 && mouseX < 1347 && mouseY < 96) {
+
+		}
+	}
+
 	void gameMethod() {
 		CImgDisplay* window = new CImgDisplay(windowWidth, windowHeight, "Proyecto Progra 1", 0);
 		CImg<unsigned char>* background = new CImg<unsigned char>;
@@ -251,8 +288,8 @@ public:
 			float mouseX = window->mouse_x();
 			float mouseY = window->mouse_y();
 
-			/*system("cls");
-			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;*/
+			system("cls");
+			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
 
 			if (!editorMode) {
 				if (!deleteNodo) {
@@ -270,6 +307,8 @@ public:
 					showOrHideButton(window, mouseX, mouseY, background, Image);
 
 					deleteVertexButton(window, mouseX, mouseY, deleteNodo, background);
+
+					saveRoutes(window, mouseX, mouseY);
 				}
 				else {
 					deleteVertex(window, mouseX, mouseY, deleteNodo);

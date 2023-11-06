@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include "CImg.h"
+#include <fstream>
+#include <string>
 using namespace std;
 using namespace cimg_library;
 
@@ -116,6 +118,16 @@ public: //colors
 
 	}
 
+	void routeCoordenates(ofstream& outFile) {
+		if (header) {
+			RouteNodo* aux = header;
+			while (aux) {
+				outFile << "(" << aux->data.getX() << "," << aux->data.getY() << ");";
+				aux = aux->next;
+			}
+		}
+	}
+
 	void deleteRoute() {
 		while (header) {
 			RouteNodo* temp = header;
@@ -179,9 +191,11 @@ public: //colors
 	}
 };
 
-struct coordenates {
+class coordenates {
+private:
 	float x;
 	float y;
+public:
 	coordenates() = delete;
 	coordenates(float _x, float _y) : x(_x), y(_y) {}
 	void setX(float _x) { this->x = _x; }
