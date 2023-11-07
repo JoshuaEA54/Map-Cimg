@@ -26,24 +26,27 @@ private:
 	bool hideOrNot;
 
 	unsigned char* color;
+	string colorC;//for the file it is neccesary to keep the color in a string
 
 	unsigned char red[3] = { 255,0,0 };
 	unsigned char blue[3] = { 0,0,255 };
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route() : header(nullptr), nameOfRoute(""), color(red), status(false),hideOrNot(false) {}
-	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
+	Route() : header(nullptr), nameOfRoute(""), color(red), colorC("red"), status(false), hideOrNot(false) {}
+	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), colorC(newRoute.colorC), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
 
 public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
 	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
 	void setColor(unsigned char* _color) { this->color = _color; }
+	void setColorC(string _colorC) { this->colorC = _colorC; }
 	void setStatus(bool newStatus) { this->status = newStatus; }
 	void setHideOrNot(bool _HideOrNot) { this->hideOrNot = _HideOrNot; }
 
 public:
 	string getNameOfRoute() { return nameOfRoute; }
+	string getColorC() { return colorC; }
 	RouteNodo* getHeader() { return header; }
 	bool getStatus() { return status; }
 	bool getHideOrNot() { return hideOrNot; }
@@ -56,12 +59,12 @@ public: //colors
 
 	void addNodoInTheEnd(T value) {
 		RouteNodo* nodoAdded = new RouteNodo(value);
-		
+
 		if (!header) {
 			header = nodoAdded;
 		}
 		else {// means that the head-> next is with a nodo
-           RouteNodo* aux = header;
+			RouteNodo* aux = header;
 			while (aux->next) {
 				aux = aux->next;
 			}
@@ -118,11 +121,11 @@ public: //colors
 
 	}
 
-	void routeCoordenates(ofstream& outFile) {
+	void routeCoordenates(fstream& _file) {
 		if (header) {
 			RouteNodo* aux = header;
 			while (aux) {
-				outFile << "(" << aux->data.getX() << "," << aux->data.getY() << ");";
+				_file << "(" << aux->data.getX() << "-" << aux->data.getY() << "),";
 				aux = aux->next;
 			}
 		}
@@ -141,9 +144,11 @@ public: //colors
 
 			delete temp;
 		}
+		nameOfRoute = "";
+		colorC = "";
 	}
 
-	void clickUser(CImgDisplay* window, float mouseX, float mouseY,bool& _deleteNodo) {
+	void clickUser(CImgDisplay* window, float mouseX, float mouseY, bool& _deleteNodo) {
 		RouteNodo* aux = header;
 		bool flag = false;
 
