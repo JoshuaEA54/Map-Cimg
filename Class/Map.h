@@ -270,7 +270,7 @@ public:
 				file.open(name + ".txt", ios::out);
 				if (file.is_open()) {
 					deleteAllRoutes();//check
-					//loadAllRoutes method shows and put the routes on the file
+					//loadRoutesFromFile(); method shows the routes that are on the file
 					
 					file.close();
 					reDrawAllRoutes(_background, Image);
@@ -302,12 +302,7 @@ public:
 			}
 
 		}
-
-		string line;
-		while (getline(file, line)) {
-			line.erase();// punto y coma no se borra
-
-		}
+		
 	}
 
 	void gameMethod() {
