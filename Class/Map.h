@@ -14,11 +14,9 @@ private:
 
 	};
 	MapNodo* header;
-
 	int amountOfRoutes;
-	ofstream outFile;
-	ifstream inFile;
-		
+	fstream file;
+
 public:
 	Map() : header(nullptr), amountOfRoutes(0) {}
 
@@ -102,7 +100,7 @@ public:
 					aux->route.drawCirclesInRoute(_background);//to know that you pressed the button
 					aux = aux->next;
 				}
-				
+
 			}
 		}
 	}
@@ -176,12 +174,15 @@ public:
 
 						if (i == 0) {
 							aux->route.setColor(aux->route.getYellow());
+							aux->route.setColorC("yellow");
 						}
 						else if (i == 1) {
 							aux->route.setColor(aux->route.getRed());
+							aux->route.setColorC("red");
 						}
 						else {
 							aux->route.setColor(aux->route.getBlue());
+							aux->route.setColorC("blue");
 						}
 
 						aux->route.setStatus(false);//important to do not keep doing changes to this route
@@ -233,36 +234,75 @@ public:
 	void saveRoutes(CImgDisplay* window, float mouseX, float mouseY) {
 
 		if (window->button() && mouseX > 17 && mouseY > 18 && mouseX < 256 && mouseY < 96) {
-			outFile.open("Routes.txt");
+			file.open("Routes.txt", ios::out);
 
 			// See if the file opened correctly
-			if (!outFile.is_open()) {
-				cerr << "No se pudo abrir el archivo." << endl;
+			if (!file.is_open()) {
+				cout << "No se pudo abrir el archivo." << endl;
 				exit(1);
 			}
 
-			//NameOfRoute;(X,Y);
+			//NameOfRoute,(X-Y),blue,
 			if (header) {
 				MapNodo* aux = header;
 				while (aux) {
-					outFile << aux->route.getNameOfRoute() << ";";
-					aux->route.routeCoordenates(outFile);//we put the coordenates
-					outFile << endl;// to change to the next route an endl
+					file << aux->route.getNameOfRoute() << ",";
+					aux->route.routeCoordenates(file);//we put the coordenates
+					file << aux->route.getColorC() << ",";
+					file << endl;// to change to the next route an endl
 
 					aux = aux->next;
 				}
 			}
 			else {
-				outFile << " There is no routes on the map " << endl;
+				file << " There is no routes on the map " << endl;
 			}
-			outFile.close();
+			file.close();
 		}
 	}
 
-	void loadRoutes(CImgDisplay* window, float mouseX, float mouseY) {
+	void loadRoutes(CImgDisplay* window, float mouseX, float mouseY, CImg<unsigned char>*& _background, const char* Image) {
 		if (window->button() && mouseX > 1105 && mouseY > 18 && mouseX < 1347 && mouseY < 96) {
+			string name = "";
+			cout << " Digite el nombre del archivo: ";
+			getline(cin, name);
+			try {
+				file.open(name + ".txt", ios::out);
+				if (file.is_open()) {
+					deleteAllRoutes();//check
+					//loadRoutesFromFile(); method shows the routes that are on the file
+					
+					file.close();
+					reDrawAllRoutes(_background, Image);
+				}
+				else {
+					throw(name);
+				}
+			}
+			catch (string name) {
+				cout << "El archivo " << name << " no existe o no se pudo abrir..." << endl;
+			}
+		}
+	}
+
+	void deleteAllRoutes() {
+
+		while (header) {
+			header->route.deleteRoute();
+			if (header) {
+				delete header->prev;
+				header->prev = nullptr;
+				if (!header->next) {
+					delete header;
+					header = nullptr;
+				}
+				if (header) {
+					header = header->next;
+				}
+			}
 
 		}
+		
 	}
 
 	void gameMethod() {
@@ -272,11 +312,11 @@ public:
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		const char* Image = "MyNewMap2.png"; 
-		background->load(Image); 
+		const char* Image = "MyNewMap2.png";
+		background->load(Image);
 
-		bool editorMode = false;
-		bool deleteNodo = false;
+		bool editorMode = false;//used for the addRouteButton
+		bool deleteNodo = false;//used for the deleteVertexButton
 
 		Route<coordenates> tempRoute;
 
@@ -288,8 +328,8 @@ public:
 			float mouseX = window->mouse_x();
 			float mouseY = window->mouse_y();
 
-			system("cls");
-			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;
+			/*system("cls");
+			cout << "X: " << mouseX << endl << "Y: " << mouseY << endl;*/
 
 			if (!editorMode) {
 				if (!deleteNodo) {
@@ -309,17 +349,18 @@ public:
 					deleteVertexButton(window, mouseX, mouseY, deleteNodo, background);
 
 					saveRoutes(window, mouseX, mouseY);
+
+					loadRoutes(window, mouseX, mouseY, background, Image);
 				}
 				else {
 					deleteVertex(window, mouseX, mouseY, deleteNodo);
-					if(!deleteNodo)
-					reDrawAllRoutes(background, Image);
+					if (!deleteNodo)
+						reDrawAllRoutes(background, Image);
 				}
 			}
 			else {
 
 				drawingOnWindow(window, mouseX, mouseY, tempRoute, background);
-
 				//end route buttom
 				endRouteButton(window, mouseX, mouseY, tempRoute, editorMode);
 			}

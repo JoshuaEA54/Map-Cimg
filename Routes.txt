@@ -1,2 +1,1 @@
-San Jose;(340,462);
-Casa de Jaz;
+ There is no routes on the map 
