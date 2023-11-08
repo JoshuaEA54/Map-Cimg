@@ -82,6 +82,7 @@ public:
 
 			Route<coordenates> aux;
 			aux.setColor(tempRoute.getColor());
+			aux.setColorC(tempRoute.getColorC());//to actualize the value of the string
 			tempRoute = aux;//inicializo route
 
 			// ya cuando tengo la ruta completamente creada y le doy al boton guardar				
@@ -114,6 +115,8 @@ public:
 			if (aux->route.getStatus() == true && window->button() && mouseX > 657 && mouseY > 642 && mouseX < 971 && mouseY < 722) {
 				//delete button
 				aux->route.deleteRoute();
+				amountOfRoutes--;
+
 				reDrawAllRoutes(_background, Image);
 				aux->route.setStatus(false);
 			}
@@ -241,15 +244,22 @@ public:
 				cout << "No se pudo abrir el archivo." << endl;
 				exit(1);
 			}
-
-			//NameOfRoute,(X-Y),blue,
+			file << amountOfRoutes << endl;
+			//this appears just once
 			if (header) {
 				MapNodo* aux = header;
 				while (aux) {
-					file << aux->route.getNameOfRoute() << ",";
-					aux->route.routeCoordenates(file);//we put the coordenates
-					file << aux->route.getColorC() << ",";
-					file << endl;// to change to the next route an endl
+					//2 //cantidad de rutas
+					//3 //cantidad de vertices de la ruta 1
+					//San Jose,red, // nombre y color
+					//456,324,345,67,21,45, // todos los vertices separados por comas 
+					//2 // cantidad de vertices de la ruta 2
+					//Nose nombre,blue,
+					//32,35,556,700,
+					file << aux->route.getAmountVertex() << endl;
+					file << aux->route.getNameOfRoute() << "," << aux->route.getColorC() << "," << endl;
+					aux->route.routeCoordenates(file);
+					file << endl;
 
 					aux = aux->next;
 				}
@@ -267,11 +277,10 @@ public:
 			cout << " Digite el nombre del archivo: ";
 			getline(cin, name);
 			try {
-				file.open(name + ".txt", ios::out);
+				file.open(name + ".txt", ios::in);//open it but in lecture mode
 				if (file.is_open()) {
 					deleteAllRoutes();//check
-					//loadRoutesFromFile(); method shows the routes that are on the file
-					
+					loadRoutesFromFile(); //method shows the routes that are on the file
 					file.close();
 					reDrawAllRoutes(_background, Image);
 				}
@@ -302,7 +311,19 @@ public:
 			}
 
 		}
-		
+		amountOfRoutes = 0;
+	}
+
+	void loadRoutesFromFile() {
+		string line = "";
+		while (getline(file, line)) {
+			//agarro los atributos del archivo
+			//NameOfRoute,(X-Y),blue,
+
+
+			//creo mi ruta con esos atributos y la agrego a la lista de rutas
+			//le hago set nombre , set color y el metodo addNodoInTheEnd
+		}
 	}
 
 	void gameMethod() {

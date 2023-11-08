@@ -22,31 +22,35 @@ private:
 	};
 	RouteNodo* header;
 	string nameOfRoute;
+	int amountVertex;
 	bool status;// selected or not
 	bool hideOrNot;
 
 	unsigned char* color;
-	string colorC;//for the file it is neccesary to keep the color in a string
+	string colorC;
 
 	unsigned char red[3] = { 255,0,0 };
 	unsigned char blue[3] = { 0,0,255 };
 	unsigned char yellow[3] = { 255,255,0 };
 
 public:
-	Route() : header(nullptr), nameOfRoute(""), color(red), colorC("red"), status(false), hideOrNot(false) {}
-	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute), color(newRoute.color), colorC(newRoute.colorC), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
+	Route() : header(nullptr), nameOfRoute(""), amountVertex(0),color(red),colorC("red"), status(false), hideOrNot(false) {}
+	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute),amountVertex(newRoute.amountVertex), color(newRoute.color),colorC(newRoute.colorC), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
 
 public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
+	void setAmountVertex(int _amountVertex) { this->amountVertex = _amountVertex; }
 	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
+
 	void setColor(unsigned char* _color) { this->color = _color; }
-	void setColorC(string _colorC) { this->colorC = _colorC; }
+	void setColorC(string colorC) { this->colorC = colorC; }
+
 	void setStatus(bool newStatus) { this->status = newStatus; }
 	void setHideOrNot(bool _HideOrNot) { this->hideOrNot = _HideOrNot; }
 
 public:
 	string getNameOfRoute() { return nameOfRoute; }
-	string getColorC() { return colorC; }
+	int getAmountVertex() { return amountVertex; }
 	RouteNodo* getHeader() { return header; }
 	bool getStatus() { return status; }
 	bool getHideOrNot() { return hideOrNot; }
@@ -56,6 +60,8 @@ public: //colors
 	unsigned char* getRed() { return red; }
 	unsigned char* getYellow() { return yellow; }
 	unsigned char* getBlue() { return blue; }
+	string getColorC() { return colorC; }// an string of the color needed for the files
+	
 
 	void addNodoInTheEnd(T value) {
 		RouteNodo* nodoAdded = new RouteNodo(value);
@@ -71,7 +77,7 @@ public: //colors
 			aux->next = nodoAdded;
 			aux->next->prev = aux;
 		}
-
+		amountVertex++;
 	}
 	void drawRoute(CImg<unsigned char>*& _background) {
 		RouteNodo* aux = header;
@@ -124,8 +130,8 @@ public: //colors
 	void routeCoordenates(fstream& _file) {
 		if (header) {
 			RouteNodo* aux = header;
-			while (aux) {
-				_file << "(" << aux->data.getX() << "-" << aux->data.getY() << "),";
+			while (aux) {//456,324,345,67,21,45,
+				_file << aux->data.getX() << "," << aux->data.getY() << ",";
 				aux = aux->next;
 			}
 		}
@@ -145,7 +151,7 @@ public: //colors
 			delete temp;
 		}
 		nameOfRoute = "";
-		colorC = "";
+		amountVertex = 0;
 	}
 
 	void clickUser(CImgDisplay* window, float mouseX, float mouseY, bool& _deleteNodo) {
@@ -189,6 +195,7 @@ public: //colors
 			}
 		}
 		delete nodoToDelete;
+		amountVertex = amountVertex - 1;
 	}
 
 	int calculateDistance(int mouseX, int mouseY, T chords) {
