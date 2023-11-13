@@ -54,7 +54,7 @@ public:
 			aux->next = nodoAdded;
 			aux->next->prev = aux;
 		}
-		amountOfRoutes += 1;
+		
 
 	}
 
@@ -79,6 +79,7 @@ public:
 
 			editorMode = false;
 			addRouteInTheList(tempRoute);
+			amountOfRoutes += 1;
 
 			Route<coordenates> aux;
 			aux.setColor(tempRoute.getColor());
@@ -220,6 +221,7 @@ public:
 
 			coordenates coords(mouseX, mouseY);
 			tempRoute.addNodoInTheEnd(coords);
+			tempRoute.setAmountVertex(tempRoute.getAmountVertex() + 1);
 			//metodo de dibujar lineas 
 			tempRoute.drawRoute(background);
 		}
@@ -315,15 +317,59 @@ public:
 	}
 
 	void loadRoutesFromFile() {
-		string line = "";
-		while (getline(file, line)) {
-			//agarro los atributos del archivo
-			//NameOfRoute,(X-Y),blue,
+		//agarro los atributos del archivo
+		//  2
+		//  4
+		//	ruta de san jose, yellow,
+		//	276, 531, 352, 339, 534, 191, 718, 203,
+		//	2
+		//	nose, red,
+		//	646, 384, 799, 290,
 
+        string line = "";
 
-			//creo mi ruta con esos atributos y la agrego a la lista de rutas
-			//le hago set nombre , set color y el metodo addNodoInTheEnd
+		getline(file, line);
+		int pos = line.find(" ");
+		amountOfRoutes = stoi(line.substr(0, pos));
+		for (int i = 0; i < amountOfRoutes; i++) {// las vueltas de cada ruta
+            Route<coordenates> newRoute;
+
+			getline(file, line);
+			pos = line.find(" ");
+			newRoute.setAmountVertex(stoi(line.substr(0, pos)));//that is gonna help for another for
+
+			getline(file, line);
+			pos = line.find(",");
+			newRoute.setNameOfRoute(line.substr(0, pos));
+
+			line.erase(0, pos + 1);
+			pos = line.find(",");
+			newRoute.setColor(line.substr(0, pos));
+
+			getline(file, line);// los puntos
+
+			for (int j = 0; j < newRoute.getAmountVertex(); j++) {
+				int x = 0, y = 0;
+
+				pos = line.find(",");
+				x = stoi(line.substr(0, pos));
+				line.erase(0, pos + 1);
+
+				pos = line.find(",");
+				y = stoi(line.substr(0, pos));
+				line.erase(0, pos + 1);
+
+				coordenates aux(x, y);
+				newRoute.addNodoInTheEnd(aux);//añado los vertices
+			}
+
+			addRouteInTheList(newRoute);
+			
 		}
+
+		//creo mi ruta con esos atributos y la agrego a la lista de rutas
+		//le hago set nombre , set color y el metodo addNodoInTheEnd
+
 	}
 
 	void gameMethod() {
