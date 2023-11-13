@@ -43,6 +43,18 @@ public:
 	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
 
 	void setColor(unsigned char* _color) { this->color = _color; }
+	void setColor(string colorC) {
+		if (colorC == "red") {
+			color = red;
+		}
+		else if (colorC == "blue") {
+			color = blue;
+		}
+		else {
+			color = yellow;
+		}
+	}
+
 	void setColorC(string colorC) { this->colorC = colorC; }
 
 	void setStatus(bool newStatus) { this->status = newStatus; }
@@ -77,7 +89,7 @@ public: //colors
 			aux->next = nodoAdded;
 			aux->next->prev = aux;
 		}
-		amountVertex++;
+		
 	}
 	void drawRoute(CImg<unsigned char>*& _background) {
 		RouteNodo* aux = header;
