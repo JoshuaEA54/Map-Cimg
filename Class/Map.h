@@ -39,7 +39,7 @@ public:
 	void setHeader(MapNodo* _newHeader) { header = _newHeader; }
 	void setAmountOfRoutes(int _amountOfRoutes) { this->amountOfRoutes = _amountOfRoutes; }
 
-	void addRouteInTheList(T _route) {
+	void addRouteInTheList(T& _route) {
 		MapNodo* nodoAdded = new MapNodo(_route);
 
 		if (!header) {
@@ -58,7 +58,7 @@ public:
 
 	}
 
-	void addRouteButton(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, bool& editorMode)
+	void addRouteButton(CImgDisplay* window, float mouseX, float mouseY, T& tempRoute, bool& editorMode)
 	{
 		if (window->button() && mouseX > 37 && mouseY > 634 && mouseX < 304 && mouseY < 729) {
 			system("cls");
@@ -73,7 +73,7 @@ public:
 		}
 	}
 
-	void endRouteButton(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, bool& editorMode)
+	void endRouteButton(CImgDisplay* window, float mouseX, float mouseY, T& tempRoute, bool& editorMode)
 	{
 		if (window->button() && mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) {
 
@@ -91,7 +91,7 @@ public:
 	}
 
 	void deleteVertexButton(CImgDisplay* window, float mouseX, float mouseY, bool& deleteNodo, CImg<unsigned char>*& _background) {
-		if (header) {
+		if (header) {	
 			if (window->button() && mouseX > 1009 && mouseY > 526 && mouseX < 1324 && mouseY < 611) {
 				//delete vertex button
 				deleteNodo = true;
@@ -215,7 +215,7 @@ public:
 		}
 	}
 
-	void drawingOnWindow(CImgDisplay* window, float mouseX, float mouseY, Route<coordenates>& tempRoute, CImg<unsigned char>*& background)
+	void drawingOnWindow(CImgDisplay* window, float mouseX, float mouseY, T& tempRoute, CImg<unsigned char>*& background)
 	{
 		if (window->button() && (mouseX > 323 && mouseY > 633 && mouseX < 595 && mouseY < 726) == false) {
 
@@ -344,8 +344,9 @@ public:
 
 			line.erase(0, pos + 1);
 			pos = line.find(",");
-			newRoute.setColor(line.substr(0, pos));
 
+			newRoute.setColor(line.substr(0, pos));
+			
 			getline(file, line);// los puntos
 
 			for (int j = 0; j < newRoute.getAmountVertex(); j++) {
@@ -362,13 +363,10 @@ public:
 				coordenates aux(x, y);
 				newRoute.addNodoInTheEnd(aux);//añado los vertices
 			}
-
+			
 			addRouteInTheList(newRoute);
 			
 		}
-
-		//creo mi ruta con esos atributos y la agrego a la lista de rutas
-		//le hago set nombre , set color y el metodo addNodoInTheEnd
 
 	}
 
@@ -436,9 +434,5 @@ public:
 			window->wait();
 		}
 	}
-
-
-
-
 
 };

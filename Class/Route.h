@@ -26,25 +26,28 @@ private:
 	bool status;// selected or not
 	bool hideOrNot;
 
-	unsigned char* color;
+	unsigned char* color = new unsigned char();
 	string colorC;
 
-	unsigned char red[3] = { 255,0,0 };
-	unsigned char blue[3] = { 0,0,255 };
-	unsigned char yellow[3] = { 255,255,0 };
-
+	 unsigned char red[3] = { 255,0,0 };
+	 unsigned char blue[3] = { 0,0,255 };
+	 unsigned char yellow[3] = { 255,255,0 };
+	 
 public:
-	Route() : header(nullptr), nameOfRoute(""), amountVertex(0),color(red),colorC("red"), status(false), hideOrNot(false) {}
-	Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute),amountVertex(newRoute.amountVertex), color(newRoute.color),colorC(newRoute.colorC), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
+	Route() : header(nullptr), nameOfRoute(""), amountVertex(0),color(red), colorC("red"), status(false), hideOrNot(false) {}
+	//Route(const Route& newRoute) :header(newRoute.header), nameOfRoute(newRoute.nameOfRoute),amountVertex(newRoute.amountVertex), color(newRoute.color),colorC(newRoute.colorC), status(newRoute.status), hideOrNot(newRoute.hideOrNot) {}
 
 public:
 	void setNameOfRoute(string _nameOfRoute) { this->nameOfRoute = _nameOfRoute; }
 	void setAmountVertex(int _amountVertex) { this->amountVertex = _amountVertex; }
 	void setHeader(RouteNodo* newHeader) { this->header = newHeader; }
 
-	void setColor(unsigned char* _color) { this->color = _color; }
+	void setColor(unsigned char* _color) { 
+		color = _color;
+	}
 	void setColor(string colorC) {
 		if (colorC == "red") {
+
 			color = red;
 		}
 		else if (colorC == "blue") {
@@ -75,7 +78,7 @@ public: //colors
 	string getColorC() { return colorC; }// an string of the color needed for the files
 	
 
-	void addNodoInTheEnd(T value) {
+	void addNodoInTheEnd(T& value) {
 		RouteNodo* nodoAdded = new RouteNodo(value);
 
 		if (!header) {
